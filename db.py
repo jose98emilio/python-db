@@ -35,10 +35,23 @@ def ver_contactos():
     conn.close()
     return contactos
 
-def buscar_contacto(id_buscar):
+def buscar_contacto(nombre="",telefono="", email=""):
     conn = sqlite3.connect("contactos.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM contactos WHERE id=?", (id_buscar,))
+    query="SELECT * FROM contactos WHERE 1=1"
+    params = []
+    if nombre:
+        query += " AND nombre LIKE ?"
+        params.append(f"%{nombre}%")
+
+    if telefono:
+        query += " AND telefono LIKE ?"
+        params.append(f"%{telefono}%")
+
+    if email:
+        query += " AND email LIKE ?"
+        params.append(f"%{email}%")
+    cursor.execute(query, params)
     contacto = cursor.fetchone()
     conn.close()
     return contacto
